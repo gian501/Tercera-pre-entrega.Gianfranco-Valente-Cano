@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from App03.models import Curso
+from App03.forms import CursoFormulario
 
 # Create your views here.
 
@@ -9,7 +10,19 @@ def inicio(request):
     #return HttpResponse('Vista Inicio')
 
 def cursos(request):
-    return render(request, 'App03/cursos.html')
+    if request.method == "POST":
+ 
+        miFormulario = CursoFormulario(request.POST) # Aqui me llega la informacion del html
+        print(miFormulario)
+ 
+        if miFormulario.is_valid:
+            informacion = miFormulario.cleaned_data
+            curso = Curso(nombre=informacion["curso"], comision=informacion["comision"])
+            curso.save()
+            return render(request, "App03/cursos.html", )
+    else:
+        miFormulario = CursoFormulario()
+    return render(request, 'App03/cursos.html',{"miFormulario": miFormulario})
     #return HttpResponse('Vista cursos')
 
 def profesores(request):
